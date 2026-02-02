@@ -5,6 +5,8 @@ will display the reports based on the configuration.
 """
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+
+import pandas
 from data_objects import DataStorageObject
 
 @dataclass
@@ -16,11 +18,11 @@ class ReportConfig:
     Attributes:
         preview_lines (int): Number of lines to preview from the data frame.
         summary_stats (bool):  Include summary statistics in the report.
-        show_row_count (bool):  Show the total row count in the report.
+        average_rainfall (bool): Include average rainfall calculation in the report.
     """
     preview_lines: int = 5
     summary_stats: bool = True
-    show_row_count: bool = True
+    average_rainfall: bool = True
 
 
 
@@ -38,20 +40,28 @@ class ReportGenerator:
         report_actions (list[ReportAction]): List of report actions to execute
     """
 
-    def __init__(self, duo: DataStorageObject, config: ReportConfig):
-        """
-        Initialize the ReportGenerator with a DataStorageObject and ReportConfig.
+    def __init__(self, data_object: DataStorageObject, config: ReportConfig):
 
-        :param duo: An instance of DataStorageObject
-        :param config: An instance of ReportConfig
         """
-        self.data_utility = duo
+        Class responsible for generating reports from a DataStorageObject.
+
+        :param data_object: DataStorageObject instance
+        :param config: ReportConfig instance
+        """
+
+        if not isinstance(config, ReportConfig):
+            raise TypeError("config must be an instance of ReportConfig")
+        
+        if not isinstance(data_object, DataStorageObject):
+            raise TypeError("data_object must be an instance of DataStorageObject")
+        
+        self.data_utility = data_object
         self.config = config
         self.report_actions: list[ReportAction] = []
 
     def build_actions(self) -> None:
         """
-        Build the list of report actions based on the configuration by instantiating the concrete report objects (PreviewLines, SummaryStats, ShowRowCount).
+        Build the list of report actions based on the configuration by instantiating the concrete report objects.
         """
         self.report_actions.clear()
 
@@ -59,8 +69,9 @@ class ReportGenerator:
             self.report_actions.append(PreviewLines(self.config.preview_lines))
         if self.config.summary_stats:
             self.report_actions.append(SummaryStats())
-        if self.config.show_row_count:
-            self.report_actions.append(ShowRowCount())
+        if self.config.average_rainfall:
+            self.report_actions.append(AverageRainfall())
+        
 
             
     def run_report(self) -> None:
@@ -112,12 +123,23 @@ class SummaryStats(ReportAction):
     def run(self, data) -> None:
         print(data.df.describe())
 
-class ShowRowCount(ReportAction):
-
+class AverageRainfall(ReportAction):
     """
-    Concrete ReportAction class to show the total row count from the DataStorageObject.
+    Concrete ReportAction class to show average rainfall from the DataStorageObject.
     """
     def run(self, data) -> None:
-        print(f"Total number of rows: {len(data.row_list)}")
+        total = 0
+        count = 0
+        for row in data:  
+            val = row.get("Rainfall")
+
+            if val is not None:
+                if isinstance(val, (int, float)) and pandas.notna(val):
+                    total += val
+                    count += 1
+            else:
+                continue
+        print("Avg Rainfall:", total / count if count else "N/A")
+
 
 
