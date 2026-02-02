@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module data_objects</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">data_objects</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cjason%5Cschool%5Cspring%202026%5Cpython%20development%5Cmodule_3%5Cdata_objects.py">c:\users\jason\school\spring 2026\python development\module_3\data_objects.py</a></td></tr></table>
+    <p><span class="code">Data&nbsp;Objects&nbsp;Module:<br>
+This&nbsp;module&nbsp;contains&nbsp;classes&nbsp;for&nbsp;storing&nbsp;data&nbsp;and&nbsp;loading&nbsp;data&nbsp;from&nbsp;CSV&nbsp;files.</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="pandas.html">pandas</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="data_objects.html#DataLoader">DataLoader</a>
+</dt><dt class="heading-text"><a href="data_objects.html#DataStorageObject">DataStorageObject</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="DataLoader">class <strong>DataLoader</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">A&nbsp;class&nbsp;responsible&nbsp;for&nbsp;loading&nbsp;data&nbsp;from&nbsp;various&nbsp;sources.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="DataLoader-load_csv"><strong>load_csv</strong></a>(self, file_path: str) -&gt; pandas.DataFrame</dt><dd><span class="code">Load&nbsp;data&nbsp;from&nbsp;the&nbsp;specified&nbsp;CSV&nbsp;file.<br>
+&nbsp;<br>
+:param&nbsp;file_path:&nbsp;The&nbsp;path&nbsp;to&nbsp;the&nbsp;CSV&nbsp;file<br>
+:return:&nbsp;Loaded&nbsp;data&nbsp;as&nbsp;a&nbsp;pandas&nbsp;DataFrame</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="DataStorageObject">class <strong>DataStorageObject</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#DataStorageObject">DataStorageObject</a>(data:&nbsp;pandas.DataFrame)<br>
+&nbsp;<br>
+An&nbsp;Object&nbsp;that&nbsp;stores&nbsp;data&nbsp;from&nbsp;a&nbsp;CSV&nbsp;file&nbsp;and&nbsp;converts&nbsp;it&nbsp;into&nbsp;a&nbsp;python&nbsp;2d&nbsp;array&nbsp;of&nbsp;rows.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="DataStorageObject-__init__"><strong>__init__</strong></a>(self, data: pandas.DataFrame)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;Object&nbsp;with&nbsp;a&nbsp;pandas&nbsp;DataFrame.<br>
+&nbsp;<br>
+:param&nbsp;data:&nbsp;A&nbsp;pandas&nbsp;DataFrame&nbsp;containing&nbsp;the&nbsp;data<br>
+&nbsp;<br>
+attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;*private*&nbsp;_df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;pandas&nbsp;DataFrame<br>
+&nbsp;&nbsp;&nbsp;&nbsp;*private*&nbsp;_row_list&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;rows&nbsp;from&nbsp;the&nbsp;DataFrame&nbsp;(2d&nbsp;array)</span></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>df</strong></dt>
+<dd><span class="code">Get&nbsp;the&nbsp;data&nbsp;frame&nbsp;from&nbsp;self.<br>
+&nbsp;<br>
+:return:&nbsp;The&nbsp;pandas&nbsp;DataFrame</span></dd>
+</dl>
+<dl><dt><strong>row_list</strong></dt>
+<dd><span class="code">Get&nbsp;the&nbsp;list&nbsp;of&nbsp;rows&nbsp;from&nbsp;self.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;list&nbsp;of&nbsp;rows&nbsp;from&nbsp;the&nbsp;DataFrame&nbsp;(2d&nbsp;array)</span></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>
