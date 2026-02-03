@@ -1,5 +1,5 @@
 
-# Weather Project (OOP enhancement) - Module 3
+# Weather Project (Generators, Iterators, Logging, Exceptions.) - Module 4
 
 ## Design
 
@@ -9,7 +9,13 @@ In the Reports module, I used an abstract class to define ReportActions base cla
 
 The ReportConfig @dataclass is used as a simple configuration class so I can save multiple reports in different variables by instantiating objects so I can avoid having to modify the code everytime I need to change the specif report/s.
 
-Main.py is a clear, simple example of how to use these modules together and produce a report.
+I also added a logging system with command-line configuration. Users can enable or adjust logging behavior through CLI arguments, making debugging and tracing program execution much easier.
+
+Robust exception handling is built into file loading, report execution, and data access to prevent crashes and provide meaningful error messages to the user.
+
+main.py serves as a clean example of how all modules interact to produce a report.
+
+Note: Naming may continue to evolve as the project grows and architecture stabilizes.
 
 Note: It was hard to choose good names for these modules/classes early on into the Phases so I will be tweaking the names to of the modules and classes in the future.
 
@@ -28,6 +34,14 @@ Polymorphism (different report actions share the same run() behavior)
 Composition (ReportGenerator uses a DataStorageObject)
 
 Dataclasses (configuration object for report settings)
+
+Generators (lazy iteration over dataset rows)
+
+Iterators (custom iterable data container)
+
+Logging (runtime diagnostics and CLI control)
+
+Exception handling (graceful failure and recovery)
 
 This project is modularized into multiple modules so the classes can be reused
 in later phases.
