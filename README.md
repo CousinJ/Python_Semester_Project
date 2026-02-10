@@ -74,11 +74,11 @@ Each module includes automated unit tests using pytest and doctest. Coverage rep
 
 ## Running tests
 
-- run all tests
+### run all tests
 python -m pytest
 
-- run tests with covereage
+### run tests with covereage
 python -m pytest --cov=. --cov-report=term-missing
 
-- run doctests only
+### run doctests only
 python -m pytest --doctest-modules -vv
