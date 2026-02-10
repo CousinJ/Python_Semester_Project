@@ -49,8 +49,8 @@ in later phases.
 
 ## Install dependencies
 
-pip install pandas 
-pip install pytest pytest-cov
+### pip install pandas 
+### pip install pytest pytest-cov
 
 ---
 
