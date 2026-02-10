@@ -39,7 +39,14 @@ This&nbsp;module&nbsp;contains&nbsp;classes&nbsp;for&nbsp;storing&nbsp;data&nbsp
 <td class="section-title" colspan=3>&nbsp;<br><a name="DataLoader">class <strong>DataLoader</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code">A&nbsp;class&nbsp;responsible&nbsp;for&nbsp;loading&nbsp;data&nbsp;from&nbsp;various&nbsp;sources.<br>&nbsp;</span></td></tr>
+<td class="decor title-decor" colspan=2><span class="code">A&nbsp;class&nbsp;responsible&nbsp;for&nbsp;loading&nbsp;data&nbsp;from&nbsp;various&nbsp;sources.<br>
+&nbsp;<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;from&nbsp;data_objects&nbsp;import&nbsp;<a href="#DataLoader">DataLoader</a><br>
+&gt;&gt;&gt;&nbsp;loader&nbsp;=&nbsp;<a href="#DataLoader">DataLoader</a>()<br>
+&gt;&gt;&gt;&nbsp;df&nbsp;=&nbsp;loader.<a href="#DataLoader-load_csv">load_csv</a>("tests/input_test.csv")<br>
+&gt;&gt;&gt;&nbsp;df.empty<br>
+False<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="DataLoader-load_csv"><strong>load_csv</strong></a>(self, file_path: str) -&gt; pandas.DataFrame</dt><dd><span class="code">Load&nbsp;data&nbsp;from&nbsp;the&nbsp;specified&nbsp;CSV&nbsp;file&nbsp;with&nbsp;robust&nbsp;error&nbsp;handling.<br>
@@ -81,7 +88,13 @@ An&nbsp;Object&nbsp;that&nbsp;stores&nbsp;data&nbsp;from&nbsp;a&nbsp;CSV&nbsp;fi
 :param&nbsp;data:&nbsp;A&nbsp;pandas&nbsp;DataFrame&nbsp;containing&nbsp;the&nbsp;data<br>
 &nbsp;<br>
 attributes:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;*private*&nbsp;_df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;pandas&nbsp;DataFrame</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;*private*&nbsp;_df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;pandas&nbsp;DataFrame<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;pandas&nbsp;as&nbsp;pd<br>
+&gt;&gt;&gt;&nbsp;df&nbsp;=&nbsp;pd.DataFrame({'A':&nbsp;[1],&nbsp;'B':&nbsp;[2]})<br>
+&gt;&gt;&gt;&nbsp;obj&nbsp;=&nbsp;<a href="#DataStorageObject">DataStorageObject</a>(df)<br>
+&gt;&gt;&gt;&nbsp;list(obj.<a href="#DataStorageObject-iter_rows_dict">iter_rows_dict</a>())<br>
+[{'A':&nbsp;1,&nbsp;'B':&nbsp;2}]</span></dd></dl>
 
 <dl><dt><a name="DataStorageObject-__iter__"><strong>__iter__</strong></a>(self)</dt><dd><span class="code">Make&nbsp;the&nbsp;<a href="#DataStorageObject">DataStorageObject</a>&nbsp;iterable.<br>
 &nbsp;<br>

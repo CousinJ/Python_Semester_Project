@@ -219,7 +219,21 @@ param&nbsp;config:&nbsp;An&nbsp;instance&nbsp;of&nbsp;<a href="#ReportConfig">Re
 attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;data_utility&nbsp;(DataStorageObject):&nbsp;The&nbsp;data&nbsp;storage&nbsp;<a href="builtins.html#object">object</a>&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;config&nbsp;(<a href="#ReportConfig">ReportConfig</a>):&nbsp;The&nbsp;report&nbsp;configuration<br>
-&nbsp;&nbsp;&nbsp;&nbsp;report_actions&nbsp;(list[<a href="#ReportAction">ReportAction</a>]):&nbsp;List&nbsp;of&nbsp;report&nbsp;actions&nbsp;to&nbsp;execute<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;report_actions&nbsp;(list[<a href="#ReportAction">ReportAction</a>]):&nbsp;List&nbsp;of&nbsp;report&nbsp;actions&nbsp;to&nbsp;execute<br>
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;pandas&nbsp;as&nbsp;pd<br>
+&gt;&gt;&gt;&nbsp;from&nbsp;data_objects&nbsp;import&nbsp;DataStorageObject<br>
+&gt;&gt;&gt;&nbsp;from&nbsp;reports&nbsp;import&nbsp;<a href="#ReportConfig">ReportConfig</a>,&nbsp;<a href="#ReportGenerator">ReportGenerator</a><br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;df&nbsp;=&nbsp;DataStorageObject(pd.DataFrame({'A':&nbsp;[1],&nbsp;'B':&nbsp;[2]}))<br>
+&gt;&gt;&gt;&nbsp;config&nbsp;=&nbsp;<a href="#ReportConfig">ReportConfig</a>(preview_lines=1,&nbsp;summary_stats=True,&nbsp;average_rainfall=False)<br>
+&gt;&gt;&gt;&nbsp;gen&nbsp;=&nbsp;<a href="#ReportGenerator">ReportGenerator</a>(df,&nbsp;config)<br>
+&gt;&gt;&gt;&nbsp;gen.<a href="#ReportGenerator-build_actions">build_actions</a>()<br>
+&gt;&gt;&gt;&nbsp;len(gen.report_actions)&nbsp;&gt;&nbsp;0<br>
+True<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="ReportGenerator-__init__"><strong>__init__</strong></a>(self, data_object: DataStorageObject, config: ReportConfig)</dt><dd><span class="code">Class&nbsp;responsible&nbsp;for&nbsp;generating&nbsp;reports&nbsp;from&nbsp;a&nbsp;DataStorageObject.<br>
