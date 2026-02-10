@@ -21,6 +21,12 @@ class DataStorageObject:
 
         attributes:
             *private* _df (pandas.DataFrame): The pandas DataFrame
+
+        >>> import pandas as pd
+        >>> df = pd.DataFrame({'A': [1], 'B': [2]})
+        >>> obj = DataStorageObject(df)
+        >>> list(obj.iter_rows_dict())
+        [{'A': 1, 'B': 2}]
             
 
         """
@@ -68,6 +74,15 @@ class DataStorageObject:
 class DataLoader:
     """
     A class responsible for loading data from various sources.
+
+
+    >>> from data_objects import DataLoader
+    >>> loader = DataLoader()
+    >>> df = loader.load_csv("tests/input_test.csv")
+    >>> df.empty
+    False
+    
+
     """
 
     def validate_csv_path(self, file_path: str) -> Path:

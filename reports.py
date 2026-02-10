@@ -38,6 +38,20 @@ class ReportGenerator:
         data_utility (DataStorageObject): The data storage object   
         config (ReportConfig): The report configuration
         report_actions (list[ReportAction]): List of report actions to execute
+
+
+
+
+    >>> import pandas as pd
+    >>> from data_objects import DataStorageObject
+    >>> from reports import ReportConfig, ReportGenerator
+
+    >>> df = DataStorageObject(pd.DataFrame({'A': [1], 'B': [2]}))
+    >>> config = ReportConfig(preview_lines=1, summary_stats=True, average_rainfall=False)
+    >>> gen = ReportGenerator(df, config)
+    >>> gen.build_actions()
+    >>> len(gen.report_actions) > 0
+    True
     """
 
     def __init__(self, data_object: DataStorageObject, config: ReportConfig):
