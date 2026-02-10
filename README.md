@@ -47,9 +47,10 @@ This project is modularized into multiple modules so the classes can be reused
 in later phases.
 
 
-## install pandas library
+## Install dependencies
 
 pip install pandas 
+pip install pytest pytest-cov
 
 ---
 
@@ -66,3 +67,18 @@ separately and place it in your project folder to then use it.
 -- Report generator generates reports based on the report config with individual configurable report classes
 
 ---
+
+## Testing (Module 5)
+
+Each module includes automated unit tests using pytest and doctest. Coverage reporting is used to confirm that the important code paths are executed and validated. These tests verify both normal behavior and error handling, demonstrating automated software testing principles.
+
+## Running tests
+
+- run all tests
+python -m pytest
+
+- run tests with covereage
+python -m pytest --cov=. --cov-report=term-missing
+
+- run doctests only
+python -m pytest --doctest-modules -vv
