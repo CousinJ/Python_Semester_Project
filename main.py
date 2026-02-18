@@ -85,7 +85,7 @@ def main() -> None:
         data_object = DataStorageObject(df)
 
         
-        report_config = ReportConfig(preview_lines=10, summary_stats=True, average_rainfall=True)
+        report_config = ReportConfig(preview_lines=10, summary_stats=True, average_rainfall=True, mean_rainfall_by_area=True, top_temp_range_by_area=True)
 
         report_generator = ReportGenerator(data_object, report_config)
         logger.info(f"Running report with config: {report_config}")
@@ -93,6 +93,8 @@ def main() -> None:
 
         logger.info("Report completed successfully")
         logger.info("Application finished successfully")
+
+        
 
     except Exception as e:
         logger.exception(f"Application error: {e}")

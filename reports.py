@@ -5,8 +5,9 @@ will display the reports based on the configuration.
 """
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-
+from functools import reduce
 import pandas
+import matplotlib.pyplot as plt
 from data_objects import DataStorageObject
 
 @dataclass
@@ -23,6 +24,9 @@ class ReportConfig:
     preview_lines: int = 5
     summary_stats: bool = True
     average_rainfall: bool = True
+    mean_rainfall_by_area: bool = False
+    top_temp_range_by_area: bool = False
+  
 
 
 
@@ -85,6 +89,11 @@ class ReportGenerator:
             self.report_actions.append(SummaryStats())
         if self.config.average_rainfall:
             self.report_actions.append(AverageRainfall())
+        if self.config.mean_rainfall_by_area:
+            self.report_actions.append(MeanRainfallByArea())
+        if self.config.top_temp_range_by_area:
+            self.report_actions.append(TopTempRangeByLocation())
+        
         
 
             
@@ -156,4 +165,116 @@ class AverageRainfall(ReportAction):
         print("Avg Rainfall:", total / count if count else "N/A")
 
 
+#average tempeture during the day for each area
 
+#plot mean rainfall for each area
+class MeanRainfallByArea(ReportAction):
+    """
+    Concrete ReportAction class to show mean rainfall by area from the DataStorageObject.
+    """
+    def __init__(self, top_n: int = 15, output_file: str = "report_outputs/Mean_Rainfall_By_Area.png"):
+        self.top_n = top_n
+        self.output_file = output_file
+
+    def run(self, data) -> None:
+        try:
+            df = data.df.copy()
+            df = df.dropna(subset=["Location", "Rainfall"])
+            mean_rainfall = df.groupby("Location")["Rainfall"].mean()
+            mean_rainfall = mean_rainfall.head(self.top_n)
+            mean_rainfall = mean_rainfall.sort_values(ascending=False)
+
+                # Plotting
+            plt.figure(figsize=(10, 5))
+            mean_rainfall.plot(kind='bar')
+            plt.title("Mean Rainfall by Area")
+            plt.xlabel("Location")
+            plt.ylabel("Mean Rainfall")
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            plt.savefig(self.output_file)
+            print(f"Mean_rainfall_by_area chart successfully saved to {self.output_file}")
+
+        except Exception as e:
+            print(f"Error calculating mean rainfall by area: {e}")
+            return
+       
+
+class TopTempRangeByLocation(ReportAction):
+
+    def __init__(self, top_n: int = 15, output_file: str = "report_outputs/Top_Temp_Range_By_Location.png"):
+        self.top_n = top_n
+        self.output_file = output_file
+        
+    def run(self, data) -> None:
+        try:
+            rows = data.df.to_dict(orient="records")
+
+            # 1️⃣ Filter rows that have valid MinTemp, MaxTemp, Location
+            valid_rows = list(filter(
+                lambda r: (
+                    r.get("Location") is not None
+                    and pandas.notna(r.get("MinTemp"))
+                    and pandas.notna(r.get("MaxTemp"))
+                ),
+                rows
+            ))
+
+            if not valid_rows:
+                print("No valid temperature rows found.")
+                return
+
+            # 2️⃣ Map rows to (Location, TempRange)
+            location_ranges = list(map(
+                lambda r: (
+                    r["Location"],
+                    float(r["MaxTemp"]) - float(r["MinTemp"])
+                ),
+                valid_rows
+            ))
+
+            # 3️⃣ Reduce into dictionary of totals and counts
+            def reducer(acc, item):
+                loc, temp_range = item
+
+                if loc not in acc:
+                    acc[loc] = {"total": 0.0, "count": 0}
+
+                acc[loc]["total"] += temp_range
+                acc[loc]["count"] += 1
+                return acc
+
+            aggregated = reduce(reducer, location_ranges, {})
+
+            # 4️⃣ Compute average temp range per location
+            avg_ranges = {
+                loc: values["total"] / values["count"]
+                for loc, values in aggregated.items()
+                if values["count"] > 0
+            }
+
+            # 5️⃣ Sort and get top N
+            top = sorted(avg_ranges.items(), key=lambda x: x[1], reverse=True)[:self.top_n]
+
+            print(f"\nTop {self.top_n} Locations by Average Temp Range (MaxTemp - MinTemp):")
+            for loc, value in top:
+                print(f"{loc}: {value:.2f}")
+            # Convert to dict for plotting
+
+
+            top_dict = dict(top)
+            # 6️⃣ PLOT
+            plt.figure(figsize=(10, 5))
+            plt.bar(top_dict.keys(), top_dict.values())
+            plt.title(f"Top {self.top_n} Locations by Avg Temp Range")
+            plt.xlabel("Location")
+            plt.ylabel("Average Temp Range (°C)")
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            plt.savefig(self.output_file)
+            plt.close()
+
+            print(f"\nChart saved to: {self.output_file}")
+
+        except Exception as e:
+            print(f"Error calculating temp range (functional): {e}")
