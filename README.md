@@ -50,6 +50,7 @@ in later phases.
 ## Install dependencies
 
 ### pip install pandas 
+### pip install matplotlib
 ### pip install pytest pytest-cov
 
 ---

@@ -1,7 +1,10 @@
-from reports import ReportGenerator, ReportConfig, ReportAction
-from data_objects import DataStorageObject
+from importlib.abc import Loader
+from reports import ReportGenerator, ReportConfig, ReportAction, TopTempRangeByLocation, MeanRainfallByArea
+from data_objects import DataStorageObject, DataLoader
 import pandas as pd
 import pytest   
+import matplotlib 
+matplotlib.use('Agg')  # Use non-interactive backend for testing
 
 
 
@@ -44,3 +47,48 @@ def test_report_generator_build_actions_building_correctly():
 
     assert len(report_gen.report_actions) == 2
     assert all(isinstance(action, ReportAction) for action in report_gen.report_actions)
+
+
+# ================================================    Report Actions Tests  ================================================
+
+def test_mean_rainfall_by_area_creates_plot_file(tmp_path):
+    df = pd.DataFrame({
+        "Location": ["A", "A", "B", "B"],
+        "Rainfall": [100.0, 150.0, 200.0, 180.0]
+    })
+    dso = DataStorageObject(df)
+
+    out_file = tmp_path / "mean_rain.png"
+    report = MeanRainfallByArea(top_n=2, output_file=str(out_file))
+    report.run(dso)
+
+    assert out_file.exists()
+    assert out_file.stat().st_size > 0 
+
+def test_top_temp_range_by_location_creates_plot_file(tmp_path):
+    df = pd.DataFrame({
+        "Location": ["A", "A", "B", "B"],
+        "MinTemp": [10.0, 5.0, 0.0, 2.0],
+        "MaxTemp": [20.0, 25.0, 10.0, 12.0],
+    })
+    dso = DataStorageObject(df)
+
+    out_file = tmp_path / "temp_range.png"
+    report = TopTempRangeByLocation(top_n=2, output_file=str(out_file))
+    report.run(dso)
+
+    assert out_file.exists()
+    assert out_file.stat().st_size > 0
+
+def test_top_temp_range_handles_no_valid_rows(capsys, tmp_path):
+    
+    df = pd.DataFrame({"Location": ["A"], "MinTemp": [None], "MaxTemp": [None]})
+    dso = DataStorageObject(df)
+
+    out_file = tmp_path / "temp_range.png"
+    report = TopTempRangeByLocation(top_n=2, output_file=str(out_file))
+    report.run(dso)
+
+    out = capsys.readouterr().out
+    assert "No valid temperature rows found." in out
+    assert not out_file.exists()  

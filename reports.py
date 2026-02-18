@@ -178,11 +178,12 @@ class MeanRainfallByArea(ReportAction):
 
     def run(self, data) -> None:
         try:
+            # group by location to find rainfall averages for each area
             df = data.df.copy()
             df = df.dropna(subset=["Location", "Rainfall"])
             mean_rainfall = df.groupby("Location")["Rainfall"].mean()
-            mean_rainfall = mean_rainfall.head(self.top_n)
-            mean_rainfall = mean_rainfall.sort_values(ascending=False)
+            #Sort and get top N locations
+            mean_rainfall = mean_rainfall.sort_values(ascending=False).head(self.top_n)
 
                 # Plotting
             plt.figure(figsize=(10, 5))
@@ -205,12 +206,12 @@ class TopTempRangeByLocation(ReportAction):
     def __init__(self, top_n: int = 15, output_file: str = "report_outputs/Top_Temp_Range_By_Location.png"):
         self.top_n = top_n
         self.output_file = output_file
-        
+
     def run(self, data) -> None:
         try:
             rows = data.df.to_dict(orient="records")
 
-            # 1️⃣ Filter rows that have valid MinTemp, MaxTemp, Location
+            #clean data with filter
             valid_rows = list(filter(
                 lambda r: (
                     r.get("Location") is not None
@@ -223,8 +224,9 @@ class TopTempRangeByLocation(ReportAction):
             if not valid_rows:
                 print("No valid temperature rows found.")
                 return
+            
 
-            # 2️⃣ Map rows to (Location, TempRange)
+            # transform rows into ranges of maxtemp - mintemp
             location_ranges = list(map(
                 lambda r: (
                     r["Location"],
@@ -233,7 +235,7 @@ class TopTempRangeByLocation(ReportAction):
                 valid_rows
             ))
 
-            # 3️⃣ Reduce into dictionary of totals and counts
+            # reduce to aggrete total temp range and row count per location
             def reducer(acc, item):
                 loc, temp_range = item
 
@@ -246,22 +248,17 @@ class TopTempRangeByLocation(ReportAction):
 
             aggregated = reduce(reducer, location_ranges, {})
 
-            # 4️⃣ Compute average temp range per location
+            # Calculate average temp range per location with aggregated totals and counts
             avg_ranges = {
                 loc: values["total"] / values["count"]
                 for loc, values in aggregated.items()
                 if values["count"] > 0
             }
 
-            # 5️⃣ Sort and get top N
+            # Sort and get top N locations from avg_ranges
             top = sorted(avg_ranges.items(), key=lambda x: x[1], reverse=True)[:self.top_n]
 
-            print(f"\nTop {self.top_n} Locations by Average Temp Range (MaxTemp - MinTemp):")
-            for loc, value in top:
-                print(f"{loc}: {value:.2f}")
             # Convert to dict for plotting
-
-
             top_dict = dict(top)
             # 6️⃣ PLOT
             plt.figure(figsize=(10, 5))
@@ -277,4 +274,4 @@ class TopTempRangeByLocation(ReportAction):
             print(f"\nChart saved to: {self.output_file}")
 
         except Exception as e:
-            print(f"Error calculating temp range (functional): {e}")
+            print(f"Error calculating temp range: {e}")
