@@ -19,7 +19,8 @@ will&nbsp;display&nbsp;the&nbsp;reports&nbsp;based&nbsp;on&nbsp;the&nbsp;configu
     
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="pandas.html">pandas</a><br>
-</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+</td><td class="multicolumn"><a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
@@ -33,8 +34,10 @@ will&nbsp;display&nbsp;the&nbsp;reports&nbsp;based&nbsp;on&nbsp;the&nbsp;configu
 </dt><dd>
 <dl>
 <dt class="heading-text"><a href="reports.html#AverageRainfall">AverageRainfall</a>
+</dt><dt class="heading-text"><a href="reports.html#MeanRainfallByArea">MeanRainfallByArea</a>
 </dt><dt class="heading-text"><a href="reports.html#PreviewLines">PreviewLines</a>
 </dt><dt class="heading-text"><a href="reports.html#SummaryStats">SummaryStats</a>
+</dt><dt class="heading-text"><a href="reports.html#TopTempRangeByLocation">TopTempRangeByLocation</a>
 </dt></dl>
 </dd>
 </dl>
@@ -64,6 +67,49 @@ will&nbsp;display&nbsp;the&nbsp;reports&nbsp;based&nbsp;on&nbsp;the&nbsp;configu
 <hr>
 Methods defined here:<br>
 <dl><dt><a name="AverageRainfall-run"><strong>run</strong></a>(self, data) -&gt; None</dt><dd><span class="code">Docstring&nbsp;for&nbsp;run<br>
+&nbsp;<br>
+:param&nbsp;data:&nbsp;The&nbsp;instance&nbsp;of&nbsp;the&nbsp;DatastorageObject</span></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="reports.html#ReportAction">ReportAction</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="MeanRainfallByArea">class <strong>MeanRainfallByArea</strong></a>(<a href="reports.html#ReportAction">ReportAction</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#MeanRainfallByArea">MeanRainfallByArea</a>(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;top_n:&nbsp;int&nbsp;=&nbsp;15,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_file:&nbsp;str&nbsp;=&nbsp;'report_outputs/Mean_Rainfall_By_Area.png'<br>
+)<br>
+&nbsp;<br>
+Concrete&nbsp;<a href="#ReportAction">ReportAction</a>&nbsp;class&nbsp;to&nbsp;show&nbsp;mean&nbsp;rainfall&nbsp;by&nbsp;area&nbsp;from&nbsp;the&nbsp;DataStorageObject&nbsp;using&nbsp;Matplotlib,&nbsp;generates&nbsp;file&nbsp;into&nbsp;"report_outputs"&nbsp;dir.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="reports.html#MeanRainfallByArea">MeanRainfallByArea</a></dd>
+<dd><a href="reports.html#ReportAction">ReportAction</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="MeanRainfallByArea-__init__"><strong>__init__</strong></a>(
+    self,
+    top_n: int = 15,
+    output_file: str = 'report_outputs/Mean_Rainfall_By_Area.png'
+)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="MeanRainfallByArea-run"><strong>run</strong></a>(self, data) -&gt; None</dt><dd><span class="code">Docstring&nbsp;for&nbsp;run<br>
 &nbsp;<br>
 :param&nbsp;data:&nbsp;The&nbsp;instance&nbsp;of&nbsp;the&nbsp;DatastorageObject</span></dd></dl>
 
@@ -155,7 +201,9 @@ Data and other attributes defined here:<br>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#ReportConfig">ReportConfig</a>(<br>
 &nbsp;&nbsp;&nbsp;&nbsp;preview_lines:&nbsp;int&nbsp;=&nbsp;5,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;summary_stats:&nbsp;bool&nbsp;=&nbsp;True,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;average_rainfall:&nbsp;bool&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;average_rainfall:&nbsp;bool&nbsp;=&nbsp;True,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mean_rainfall_by_area:&nbsp;bool&nbsp;=&nbsp;False,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;top_temp_range_by_area:&nbsp;bool&nbsp;=&nbsp;False<br>
 )&nbsp;-&amp;gt;&nbsp;None<br>
 &nbsp;<br>
 A&nbsp;configuration&nbsp;data&nbsp;class&nbsp;for&nbsp;report&nbsp;settings.<br>
@@ -172,7 +220,9 @@ Attributes:<br>
     self,
     preview_lines: int = 5,
     summary_stats: bool = True,
-    average_rainfall: bool = True
+    average_rainfall: bool = True,
+    mean_rainfall_by_area: bool = False,
+    top_temp_range_by_area: bool = False
 ) -&gt; None</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
 
 <dl><dt><a name="ReportConfig-__replace__"><strong>__replace__</strong></a> = _replace(self, /, **changes)<span class="grey"><span class="heading-text"> from <a href="dataclasses.html">dataclasses</a></span></span></dt></dl>
@@ -189,19 +239,23 @@ Data descriptors defined here:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>__dataclass_fields__</strong> = {'average_rainfall': Field(name='average_rainfall',type=&lt;class 'bool'...xy({}),kw_only=False,doc=None,_field_type=_FIELD), 'preview_lines': Field(name='preview_lines',type=&lt;class 'int'&gt;,de...xy({}),kw_only=False,doc=None,_field_type=_FIELD), 'summary_stats': Field(name='summary_stats',type=&lt;class 'bool'&gt;,d...xy({}),kw_only=False,doc=None,_field_type=_FIELD)}</dl>
+<dl><dt><strong>__dataclass_fields__</strong> = {'average_rainfall': Field(name='average_rainfall',type=&lt;class 'bool'...xy({}),kw_only=False,doc=None,_field_type=_FIELD), 'mean_rainfall_by_area': Field(name='mean_rainfall_by_area',type=&lt;class '...xy({}),kw_only=False,doc=None,_field_type=_FIELD), 'preview_lines': Field(name='preview_lines',type=&lt;class 'int'&gt;,de...xy({}),kw_only=False,doc=None,_field_type=_FIELD), 'summary_stats': Field(name='summary_stats',type=&lt;class 'bool'&gt;,d...xy({}),kw_only=False,doc=None,_field_type=_FIELD), 'top_temp_range_by_area': Field(name='top_temp_range_by_area',type=&lt;class ...xy({}),kw_only=False,doc=None,_field_type=_FIELD)}</dl>
 
 <dl><dt><strong>__dataclass_params__</strong> = _DataclassParams(init=True,repr=True,eq=True,ord...rue,kw_only=False,slots=False,weakref_slot=False)</dl>
 
 <dl><dt><strong>__hash__</strong> = None</dl>
 
-<dl><dt><strong>__match_args__</strong> = ('preview_lines', 'summary_stats', 'average_rainfall')</dl>
+<dl><dt><strong>__match_args__</strong> = ('preview_lines', 'summary_stats', 'average_rainfall', 'mean_rainfall_by_area', 'top_temp_range_by_area')</dl>
 
 <dl><dt><strong>average_rainfall</strong> = True</dl>
+
+<dl><dt><strong>mean_rainfall_by_area</strong> = False</dl>
 
 <dl><dt><strong>preview_lines</strong> = 5</dl>
 
 <dl><dt><strong>summary_stats</strong> = True</dl>
+
+<dl><dt><strong>top_temp_range_by_area</strong> = False</dl>
 
 </td></tr></table> <p>
 <table class="section">
@@ -285,5 +339,62 @@ Data descriptors inherited from <a href="reports.html#ReportAction">ReportAction
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
 </dl>
-</td></tr></table></td></tr></table>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="TopTempRangeByLocation">class <strong>TopTempRangeByLocation</strong></a>(<a href="reports.html#ReportAction">ReportAction</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#TopTempRangeByLocation">TopTempRangeByLocation</a>(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;top_n:&nbsp;int&nbsp;=&nbsp;15,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_file:&nbsp;str&nbsp;=&nbsp;'report_outputs/Top_Temp_Range_By_Location.png'<br>
+)<br>
+&nbsp;<br>
+Concrete&nbsp;report&nbsp;action&nbsp;to&nbsp;show&nbsp;top&nbsp;temperature&nbsp;ranges&nbsp;by&nbsp;location&nbsp;from&nbsp;the&nbsp;DataStorageObject&nbsp;using&nbsp;Matplotlib,&nbsp;generates&nbsp;file&nbsp;into&nbsp;"report_outputs"&nbsp;dir.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="reports.html#TopTempRangeByLocation">TopTempRangeByLocation</a></dd>
+<dd><a href="reports.html#ReportAction">ReportAction</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="TopTempRangeByLocation-__init__"><strong>__init__</strong></a>(
+    self,
+    top_n: int = 15,
+    output_file: str = 'report_outputs/Top_Temp_Range_By_Location.png'
+)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="TopTempRangeByLocation-run"><strong>run</strong></a>(self, data) -&gt; None</dt><dd><span class="code">Docstring&nbsp;for&nbsp;run<br>
+&nbsp;<br>
+:param&nbsp;data:&nbsp;The&nbsp;instance&nbsp;of&nbsp;the&nbsp;DatastorageObject</span></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="reports.html#ReportAction">ReportAction</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-reduce"><strong>reduce</strong></a>(function, iterable, /, initial=&lt;unrepresentable&gt;)</dt><dd><span class="code">Apply&nbsp;a&nbsp;function&nbsp;of&nbsp;two&nbsp;arguments&nbsp;cumulatively&nbsp;to&nbsp;the&nbsp;items&nbsp;of&nbsp;an&nbsp;iterable,&nbsp;from&nbsp;left&nbsp;to&nbsp;right.<br>
+&nbsp;<br>
+This&nbsp;effectively&nbsp;reduces&nbsp;the&nbsp;iterable&nbsp;to&nbsp;a&nbsp;single&nbsp;value.&nbsp;&nbsp;If&nbsp;initial&nbsp;is&nbsp;present,<br>
+it&nbsp;is&nbsp;placed&nbsp;before&nbsp;the&nbsp;items&nbsp;of&nbsp;the&nbsp;iterable&nbsp;in&nbsp;the&nbsp;calculation,&nbsp;and&nbsp;serves&nbsp;as<br>
+a&nbsp;default&nbsp;when&nbsp;the&nbsp;iterable&nbsp;is&nbsp;empty.<br>
+&nbsp;<br>
+For&nbsp;example,&nbsp;<a href="#-reduce">reduce</a>(lambda&nbsp;x,&nbsp;y:&nbsp;x+y,&nbsp;[1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5])<br>
+calculates&nbsp;((((1&nbsp;+&nbsp;2)&nbsp;+&nbsp;3)&nbsp;+&nbsp;4)&nbsp;+&nbsp;5).</span></dd></dl>
+</td></tr></table>
 </body></html>

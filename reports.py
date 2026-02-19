@@ -165,12 +165,12 @@ class AverageRainfall(ReportAction):
         print("Avg Rainfall:", total / count if count else "N/A")
 
 
-#average tempeture during the day for each area
+
 
 #plot mean rainfall for each area
 class MeanRainfallByArea(ReportAction):
     """
-    Concrete ReportAction class to show mean rainfall by area from the DataStorageObject.
+    Concrete ReportAction class to show mean rainfall by area from the DataStorageObject using Matplotlib, generates file into "report_outputs" dir.
     """
     def __init__(self, top_n: int = 15, output_file: str = "report_outputs/Mean_Rainfall_By_Area.png"):
         self.top_n = top_n
@@ -200,8 +200,11 @@ class MeanRainfallByArea(ReportAction):
             print(f"Error calculating mean rainfall by area: {e}")
             return
        
-
+#plot top temp range by location
 class TopTempRangeByLocation(ReportAction):
+    """
+    Concrete report action to show top temperature ranges by location from the DataStorageObject using Matplotlib, generates file into "report_outputs" dir.
+    """
 
     def __init__(self, top_n: int = 15, output_file: str = "report_outputs/Top_Temp_Range_By_Location.png"):
         self.top_n = top_n
