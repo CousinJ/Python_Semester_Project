@@ -69,9 +69,64 @@ separately and place it in your project folder to then use it.
 
 ---
 
-## Testing (Module 5)
+## Data Visualization (Module 6)
 
-Each module includes automated unit tests using pytest and doctest. Coverage reporting is used to confirm that the important code paths are executed and validated. These tests verify both normal behavior and error handling, demonstrating automated software testing principles.
+I created two new reports that use matplotlib to generate images in the "report_outputs" directory. 
+The goal of these visualizations is to identify trends and compare weather characteristics across locations.
+
+### MeanRainfallByArea
+This report works by:
+
+- Dropping NaN values for Location and Rainfall
+
+- Grouping the data using pandas groupby
+
+- Calculating the mean rainfall for each location
+
+- Sorting the values and selecting the top N areas
+
+- Plotting the results using a bar chart
+
+I chose a bar graph because it makes comparing rainfall averages across multiple locations very clear and easy to interpret. You can quickly see which areas receive the most rainfall on average.
+
+
+
+### TopTempRangeByLocation
+    This report demonstrates functional programming techniques more explicitly.
+
+Steps performed:
+
+- Convert DataFrame rows to dictionaries
+
+- Use filter() with a lambda to remove rows that contain NaN temperature values
+
+- Use map() with a lambda to calculate temperature range (MaxTemp - MinTemp)
+
+- Use reduce() to aggregate total range and count per location
+
+- Compute average range per location
+
+- Sort and select the top N locations
+
+- Plot results using matplotlib
+
+I chose a bar chart again here because it clearly shows which locations experience the largest average daily temperature swings.
+
+
+### Tests
+
+
+What I automated  (tests/test_reports.py):
+
+- Test MeanRainfallByArea creates a plot file with valid data
+
+- Test TopTempRangeByLocation creates a plot file with valid data
+
+- Test TopTempRangeByLocation handles invalid data and does not genererate file
+
+
+
+
 
 ## Running tests
 
