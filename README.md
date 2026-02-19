@@ -1,5 +1,5 @@
 
-# Weather Project (Testing) - Module 5
+# Weather Project (Data Visualization) - Module 6
 
 ## Design
 
@@ -92,7 +92,7 @@ I chose a bar graph because it makes comparing rainfall averages across multiple
 
 
 ### TopTempRangeByLocation
-    This report demonstrates functional programming techniques more explicitly.
+This report demonstrates functional programming techniques more explicitly.
 
 Steps performed:
 
