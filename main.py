@@ -89,7 +89,7 @@ def main() -> None:
 
         report_generator = ReportGenerator(data_object, report_config)
         logger.info(f"Running report with config: {report_config}")
-        report_generator.run_report()
+        report_generator.run_report_threaded()
 
         logger.info("Report completed successfully")
         logger.info("Application finished successfully")

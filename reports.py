@@ -9,6 +9,8 @@ from functools import reduce
 import pandas
 import matplotlib.pyplot as plt
 from data_objects import DataStorageObject
+import threading
+import multiprocessing as mp
 
 @dataclass
 class ReportConfig:
@@ -107,7 +109,65 @@ class ReportGenerator:
 
 
 
+    def run_report_threaded(self) -> None:
+        """
+        Run report actions concurrently using basic threading.Thread.
 
+        NOTE:
+        - This gives concurrency (actions overlap).
+        - It may not speed up CPU-heavy work in CPython due to the GIL.
+        - If multiple actions use matplotlib at the same time, it can be unstable.
+        """
+        self.build_actions()
+
+        exceptions = []
+        #use array to store non plot reports
+        non_plot_reports = []
+        plot_reports = []
+        lock = threading.Lock()
+
+        # separate plot and mp reports to avoid matplotlib concurrency issues and multiprocessing inside thread
+        #run these plot/mp reports sequentially
+        for action in self.report_actions:
+            if getattr(action, "is_plot", False) or getattr(action, "uses_multiprocessing", False):
+                plot_reports.append(action)       
+            else:
+                non_plot_reports.append(action)   
+
+
+        def worker(action):
+            try:
+                action.run(self.data_utility)
+            except Exception as e:
+                # store exceptions thread-safely
+                with lock:
+                    exceptions.append((type(action).__name__, e))
+
+        threads = []
+        for action in non_plot_reports:
+            t = threading.Thread(target=worker, args=(action,))
+            t.start()
+            threads.append(t)
+
+        
+
+        # Wait for all report actions to finish
+        for t in threads:
+            t.join()
+
+        # If any thread failed, raise one combined error
+        if exceptions:
+            msg_lines = ["One or more report actions failed:"]
+            for name, e in exceptions:
+                msg_lines.append(f"- {name}: {e}")
+            raise RuntimeError("\n".join(msg_lines))
+        
+        # Run plot reports sequentially to avoid matplotlib issues
+        for action in plot_reports:
+            try:
+                action.run(self.data_utility)
+            except Exception as e:
+                print(f"Error in plot report {type(action).__name__}: {e}")
 
 
 
@@ -118,6 +178,9 @@ class ReportAction(ABC):
     """
     Abstract base class for report actions.
     """
+    def __init__(self) -> None:
+        self.is_plot = False
+
     @abstractmethod
     def run(self, data) -> None:
         """
@@ -132,8 +195,10 @@ class PreviewLines(ReportAction):
     """
     Concrete ReportAction class to preview lines from the DataStorageObject.
     """
+
     def __init__(self, num_lines: int):
         self.num_lines = num_lines
+        super().__init__()
 
     def run(self, data) -> None:
         print(data.df.head(self.num_lines))
@@ -143,25 +208,64 @@ class SummaryStats(ReportAction):
     """
     Concrete ReportAction class to show summary statistics from the DataStorageObject.
     """
+    def __init__(self):
+        super().__init__()
     def run(self, data) -> None:
         print(data.df.describe())
 
 class AverageRainfall(ReportAction):
     """
-    Concrete ReportAction class to show average rainfall from the DataStorageObject.
+    Average rainfall using multiprocessing (true multi-core parallelism).
     """
-    def run(self, data) -> None:
-        total = 0
-        count = 0
-        for row in data:  
-            val = row.get("Rainfall")
 
-            if val is not None:
-                if isinstance(val, (int, float)) and pandas.notna(val):
-                    total += val
-                    count += 1
-            else:
-                continue
+    def __init__(self, processes: int | None = None, chunks_per_process: int = 4):
+        super().__init__()
+        self.uses_multiprocessing = True
+        self.processes = processes
+        self.chunks_per_process = chunks_per_process
+
+    @staticmethod
+    def _sum_count_rainfall(chunk: list[float]) -> tuple[float, int]:
+        """
+        Multiprocessing worker: returns (sum, count) for a chunk.
+        Must be staticmethod (picklable) for Windows spawn.
+        """
+        total = 0.0
+        count = 0
+        for v in chunk:
+            total += v
+            count += 1
+        return total, count
+
+    def run(self, data) -> None:
+        # Get Rainfall column
+        s = data.df.get("Rainfall")
+        if s is None:
+            print("Avg Rainfall: N/A (Rainfall column missing)")
+            return
+
+        # Clean values to floats, drop NaNs, make plain list for pickling
+        cleaned = pandas.to_numeric(s, errors="coerce").dropna().tolist()
+        if not cleaned:
+            print("Avg Rainfall: N/A")
+            return
+
+        cpu = mp.cpu_count()
+        proc = self.processes or cpu
+
+        # Chunk data
+        num_chunks = max(proc * self.chunks_per_process, 1)
+        chunk_size = max(len(cleaned) // num_chunks, 1)
+        chunks = [cleaned[i:i + chunk_size] for i in range(0, len(cleaned), chunk_size)]
+
+        # Windows-safe: use spawn context explicitly
+        ctx = mp.get_context("spawn")
+        with ctx.Pool(processes=proc) as pool:
+            results = pool.map(AverageRainfall._sum_count_rainfall, chunks)
+
+        total = sum(t for t, _ in results)
+        count = sum(c for _, c in results)
+
         print("Avg Rainfall:", total / count if count else "N/A")
 
 
@@ -173,8 +277,10 @@ class MeanRainfallByArea(ReportAction):
     Concrete ReportAction class to show mean rainfall by area from the DataStorageObject using Matplotlib, generates file into "report_outputs" dir.
     """
     def __init__(self, top_n: int = 15, output_file: str = "report_outputs/Mean_Rainfall_By_Area.png"):
+        super().__init__()
         self.top_n = top_n
         self.output_file = output_file
+        self.is_plot = True
 
     def run(self, data) -> None:
         try:
@@ -207,6 +313,8 @@ class TopTempRangeByLocation(ReportAction):
     """
 
     def __init__(self, top_n: int = 15, output_file: str = "report_outputs/Top_Temp_Range_By_Location.png"):
+        super().__init__()
+        self.is_plot = True
         self.top_n = top_n
         self.output_file = output_file
 
