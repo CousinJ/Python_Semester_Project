@@ -1,5 +1,5 @@
 
-# Weather Project (Data Visualization) - Module 6
+# Weather Project (Multithreading Concurrency) - Module 7
 
 ## Design
 
@@ -56,9 +56,6 @@ in later phases.
 ---
 
 
-**Note:**  You must download a dataset
-separately and place it in your project folder to then use it. 
-
 ---
 
 ## Features
@@ -69,62 +66,28 @@ separately and place it in your project folder to then use it.
 
 ---
 
-## Data Visualization (Module 6)
+## Multithreading Concurrency (Module 7)
 
-I created two new reports that use matplotlib to generate images in the "report_outputs" directory. 
-The goal of these visualizations is to identify trends and compare weather characteristics across locations.
+In this phase, I added threading, multiprocessing, and asyncIO operations to my application.
+The goal of these enhancements was to maintain the original functionality while improving throughput and demonstrating practical use cases for concurrency and parallelism.
 
-### MeanRainfallByArea
-This report works by:
+### run_reports_threaded <Method> *added*
 
-- Dropping NaN values for Location and Rainfall
+I used the threading module to allow independent report actions to run concurrently instead of strictly sequentially. During testing I discovered matplotlib is not thread-safe, so I separated report actions into threaded and sequential categories. Plotting reports run sequentially while non-plot reports run in parallel threads.
 
-- Grouping the data using pandas groupby
+This improves responsiveness by overlapping independent work, although true CPU speedup is limited by Python’s GIL.
 
-- Calculating the mean rainfall for each location
+### load_csv_async <Method> *added*
 
-- Sorting the values and selecting the top N areas
+Although the dataset is local, I implemented asynchronous loading using asyncio.to_thread() to demonstrate non-blocking data fetching. The main function in main.py was converted to async so the CSV load can be awaited.
 
-- Plotting the results using a bar chart
+This design allows the application to remain responsive during I/O operations and prepares the architecture for future network-based data sources.
 
-I chose a bar graph because it makes comparing rainfall averages across multiple locations very clear and easy to interpret. You can quickly see which areas receive the most rainfall on average.
+### AverageRainfall <Class> *updated*
 
+The original implementation iterated over the entire dataset sequentially, making it a good candidate for multi-core parallelism. I refactored this report to use the multiprocessing module.
 
-
-### TopTempRangeByLocation
-This report demonstrates functional programming techniques more explicitly.
-
-Steps performed:
-
-- Convert DataFrame rows to dictionaries
-
-- Use filter() with a lambda to remove rows that contain NaN temperature values
-
-- Use map() with a lambda to calculate temperature range (MaxTemp - MinTemp)
-
-- Use reduce() to aggregate total range and count per location
-
-- Compute average range per location
-
-- Sort and select the top N locations
-
-- Plot results using matplotlib
-
-I chose a bar chart again here because it clearly shows which locations experience the largest average daily temperature swings.
-
-
-### Tests
-
-
-What I automated  (tests/test_reports.py):
-
-- Test MeanRainfallByArea creates a plot file with valid data
-
-- Test TopTempRangeByLocation creates a plot file with valid data
-
-- Test TopTempRangeByLocation handles invalid data and does not genererate file
-
-
+The rainfall data is partitioned into chunks, each processed in parallel across CPU cores using a map-reduce pattern (partial sum and count per process). The partial results are then combined to produce the same final average as the sequential version while improving throughput on larger datasets.
 
 
 

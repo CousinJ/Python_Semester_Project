@@ -3,6 +3,7 @@ from data_objects import DataStorageObject, DataLoader
 from reports import ReportConfig, ReportGenerator
 import logging
 import sys
+import asyncio
 from pathlib import Path
 
 
@@ -66,7 +67,7 @@ def configure_logging(level: int) -> logging.Logger:
 
 
 # ========================================= MAIN APPLICATION LOGIC ===================================
-def main() -> None:
+async def main() -> None:
     level = get_log_level_from_cli()
     logger = configure_logging(level)
 
@@ -79,7 +80,7 @@ def main() -> None:
         csv_path = "data/Weather Training Data.csv"
         logger.info(f"Loading CSV from: {csv_path}")
 
-        df = data_loader.load_csv(csv_path)
+        df = await data_loader.load_csv_async(csv_path)
         logger.info(f"CSV loaded successfully with {len(df)} rows and {len(df.columns)} columns")
 
         data_object = DataStorageObject(df)
@@ -102,4 +103,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

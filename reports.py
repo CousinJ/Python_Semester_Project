@@ -111,7 +111,7 @@ class ReportGenerator:
 
     def run_report_threaded(self) -> None:
         """
-        Run report actions concurrently using basic threading.Thread.
+        Run report actions concurrently using  threading.Thread.
 
         NOTE:
         - This gives concurrency (actions overlap).
@@ -215,7 +215,7 @@ class SummaryStats(ReportAction):
 
 class AverageRainfall(ReportAction):
     """
-    Average rainfall using multiprocessing (true multi-core parallelism).
+    Average rainfall using multiprocessing (multi-core parallelism).
     """
 
     def __init__(self, processes: int | None = None, chunks_per_process: int = 4):

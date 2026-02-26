@@ -6,6 +6,7 @@ This module contains classes for storing data and loading data from CSV files.
 
 
 import pandas
+import asyncio
 from pathlib import Path
   
 class DataStorageObject:
@@ -133,3 +134,9 @@ class DataLoader:
             raise ValueError(f"CSV parsing failed (bad formatting): {path}") from e
         except UnicodeDecodeError as e:
             raise ValueError(f"CSV encoding error (try UTF-8): {path}") from e 
+        
+    async def load_csv_async(self, file_path: str) -> pandas.DataFrame:
+        """
+        Asynchronous version of load_csv for potential future use.
+        """
+        return await asyncio.to_thread(self.load_csv, file_path)
