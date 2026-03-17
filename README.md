@@ -71,6 +71,8 @@ in later phases.
 In this phase, I added threading, multiprocessing, and asyncIO operations to my application.
 The goal of these enhancements was to maintain the original functionality while improving throughput and demonstrating practical use cases for concurrency and parallelism.
 
+*All 13 unit tests still pass*
+
 ### run_reports_threaded <Method> *added*
 
 I used the threading module to allow independent report actions to run concurrently instead of strictly sequentially. During testing I discovered matplotlib is not thread-safe, so I separated report actions into threaded and sequential categories. Plotting reports run sequentially while non-plot reports run in parallel threads.
