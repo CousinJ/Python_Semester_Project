@@ -1,105 +1,142 @@
-
-# Weather Project (Multithreading Concurrency) - Module 7
-
-## Design
-
-I created the data_objects module to separate the reporting logic from the data logic. Fetching and storing data is soley in the hands of the Data_objects module now. Any further data manipulation/ refined analysis will be done by adding new methods to the DataStorageObject
-
-In the Reports module, I used an abstract class to define ReportActions base class so I could build on more advanced reporting easily in the future by creating a new concrete ReportActions class and then modyfing the build_actions method in the Report Generator class. I use polymorphism here by allowing the report generator to use the method run_reports and iterate over the list of ReportActions and simply call the run method. I could have used Duck typing here and avoided using the abstract classes, but for me, this approach is much cleaner and simpler to modify in the future.
-
-The ReportConfig @dataclass is used as a simple configuration class so I can save multiple reports in different variables by instantiating objects so I can avoid having to modify the code everytime I need to change the specif report/s.
-
-I also added a logging system with command-line configuration. Users can enable or adjust logging behavior through CLI arguments, making debugging and tracing program execution much easier.
-
-Robust exception handling is built into file loading, report execution, and data access to prevent crashes and provide meaningful error messages to the user.
-
-main.py serves as a clean example of how all modules interact to produce a report.
-
-Note: Naming may continue to evolve as the project grows and architecture stabilizes.
-
-Note: It was hard to choose good names for these modules/classes early on into the Phases so I will be tweaking the names to of the modules and classes in the future.
+# Weather Project – PySpark Migration (Module 8)
 
 ## Overview
 
-This project loads a weather dataset from Kaggle and processes it using pandas.
-The program reads data from a CSV file into a pandas DataFrame, stores it inside a
-custom object, and generates reports using advanced OOP principles such as:
+This project processes a weather dataset from Kaggle and generates multiple reports using a modular, object-oriented design.
 
-Encapsulation (data stored privately inside a class)
+In this phase (Module 8), the application was migrated from a local pandas-based implementation to a **PySpark-based distributed system**, executed in a **virtual cluster environment using Google Colab**.
 
-Abstraction (report actions run through a common interface)
-
-Polymorphism (different report actions share the same run() behavior)
-
-Composition (ReportGenerator uses a DataStorageObject)
-
-Dataclasses (configuration object for report settings)
-
-Generators (lazy iteration over dataset rows)
-
-Iterators (custom iterable data container)
-
-Logging (runtime diagnostics and CLI control)
-
-Exception handling (graceful failure and recovery)
-
-This project is modularized into multiple modules so the classes can be reused
-in later phases.
-
-
-## Install dependencies
-
-### pip install pandas 
-### pip install matplotlib
-### pip install pytest pytest-cov
+The goal of this migration was to demonstrate how an existing Python application can be adapted to run in a distributed data-processing environment.
 
 ---
 
+## PySpark Environment
+
+The application was executed using **Google Colab**, which served as a virtual PySpark cluster environment.
+
 
 ---
+
+## Design
+
+The project is structured into three main modules:
+
+### data_objects.py
+
+* Responsible for loading and storing data
+* Uses a **PySpark DataFrame** instead of pandas
+* Handles CSV validation and loading via `SparkSession`
+* Encapsulates the dataset inside a `DataStorageObject`
+
+### reports.py
+
+* Contains all report logic using a modular design
+* Uses an abstract base class (`ReportAction`) for extensibility
+* Implements multiple concrete report classes such as:
+
+  * PreviewLines
+  * SummaryStats
+  * AverageRainfall
+  * MeanRainfallByArea
+  * TopTempRangeByLocation
+* Uses **PySpark transformations and aggregations** (`groupBy`, `agg`, `avg`)
+* Uses matplotlib for visualization (after converting small aggregated results to pandas)
+
+### main.py
+
+* Entry point of the application
+* Configures logging and handles execution flow
+* Loads data using PySpark
+* Runs reports based on a configurable `ReportConfig`
+
+---
+
+## Implementation
+
+* Encapsulation (data stored inside a class)
+* Abstraction (report actions share a common interface)
+* Polymorphism (multiple report types use the same `run()` method)
+* Composition (ReportGenerator uses DataStorageObject)
+* Dataclasses (ReportConfig for flexible configuration)
+* Logging (CLI-controlled logging levels)
+* Exception Handling (robust error handling for file loading and execution)
+* Distributed Computing (PySpark DataFrame operations)
+
+---
+
+## Changes for PySpark Migration
+
+To adapt the project to run in a PySpark environment, the following changes were made:
+
+* Replaced **pandas DataFrame** with **PySpark DataFrame**
+* Updated CSV loading to use `spark.read.csv()`
+* Removed:
+
+  * threading-based report execution
+  * multiprocessing logic
+  * async CSV loading
+  * row-by-row iteration (`iterrows`, generators)
+* Replaced local data processing with **Spark transformations**:
+
+  * `select()`
+  * `filter()`
+  * `groupBy()`
+  * `agg()`
+* Updated type hints and validation to expect PySpark DataFrames
+* Modified logging and output handling to work with Spark actions like `.show()`
+
+
 
 ## Features
 
--- Data Loader object has methods to read CSV files and return a data frame
--- Data Storage Object stores the Data frame and a python list with getter functions to fetch data
--- Report generator generates reports based on the report config with individual configurable report classes
+* Load CSV data using PySpark
+* Generate multiple configurable reports
+* Display preview and summary statistics
+* Compute average rainfall using distributed aggregation
+* Visualize:
+
+  * Mean rainfall by location
+  * Temperature range by location
+* CLI-based logging configuration
+* Modular and extensible architecture
 
 ---
 
-## Multithreading Concurrency (Module 7)
+## How to Run (Google Colab)
 
-In this phase, I added threading, multiprocessing, and asyncIO operations to my application.
-The goal of these enhancements was to maintain the original functionality while improving throughput and demonstrating practical use cases for concurrency and parallelism.
+1. Open Google Colab
+2. Install PySpark:
 
-*All 13 unit tests still pass*
+   ```python
+   !pip install pyspark
+   ```
+3. Upload project files and dataset
+4. Ensure CSV path is:
 
-### run_reports_threaded <Method> *added*
+   ```python
+   /content/data/Weather Training Data.csv
+   ```
+5. Run:
 
-I used the threading module to allow independent report actions to run concurrently instead of strictly sequentially. During testing I discovered matplotlib is not thread-safe, so I separated report actions into threaded and sequential categories. Plotting reports run sequentially while non-plot reports run in parallel threads.
-
-This improves responsiveness by overlapping independent work, although true CPU speedup is limited by Python’s GIL.
-
-### load_csv_async <Method> *added*
-
-Although the dataset is local, I implemented asynchronous loading using asyncio.to_thread() to demonstrate non-blocking data fetching. The main function in main.py was converted to async so the CSV load can be awaited.
-
-This design allows the application to remain responsive during I/O operations and prepares the architecture for future network-based data sources.
-
-### AverageRainfall <Class> *updated*
-
-The original implementation iterated over the entire dataset sequentially, making it a good candidate for multi-core parallelism. I refactored this report to use the multiprocessing module.
-
-The rainfall data is partitioned into chunks, each processed in parallel across CPU cores using a map-reduce pattern (partial sum and count per process). The partial results are then combined to produce the same final average as the sequential version while improving throughput on larger datasets.
+   ```python
+   !python main.py
+   ```
 
 
 
-## Running tests
+## Testing 
 
-### run all tests
+```bash
+# run all tests
 python -m pytest
 
-### run tests with covereage
+# run with coverage
 python -m pytest --cov=. --cov-report=term-missing
 
-### run doctests only
+# run doctests
 python -m pytest --doctest-modules -vv
+```
+
+---
+
+

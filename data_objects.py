@@ -1,95 +1,51 @@
 """
 Data Objects Module:
 This module contains classes for storing data and loading data from CSV files.
-
 """
 
-
-import pandas
-import asyncio
 from pathlib import Path
-  
+from pyspark.sql import DataFrame, SparkSession
+
+
 class DataStorageObject:
     """
-    An Object that stores data from a CSV file in a pandas DataFrame and provides a generator for iterating through rows as dictionaries.
+    An object that stores data from a CSV file in a PySpark DataFrame.
     """
 
-    def __init__(self, data: pandas.DataFrame):
+    def __init__(self, data: DataFrame):
         """
-        Initialize the Object with a pandas DataFrame.
+        Initialize the object with a PySpark DataFrame.
 
-        :param data: A pandas DataFrame containing the data
+        :param data: A PySpark DataFrame containing the data
 
         attributes:
-            *private* _df (pandas.DataFrame): The pandas DataFrame
-
-        >>> import pandas as pd
-        >>> df = pd.DataFrame({'A': [1], 'B': [2]})
-        >>> obj = DataStorageObject(df)
-        >>> list(obj.iter_rows_dict())
-        [{'A': 1, 'B': 2}]
-            
-
+            _df (DataFrame): The PySpark DataFrame
         """
         if data is None:
             raise ValueError("DataFrame cannot be None")
-        if not isinstance(data, pandas.DataFrame):
-            raise TypeError("Data must be a pandas DataFrame")
-        
-        self._df = data
-        
-        
-    @property
-    def df(self) -> pandas.DataFrame:
-        """
-        Get the data frame from self.
+        if not isinstance(data, DataFrame):
+            raise TypeError(f"Expected pyspark DataFrame, got {type(data).__name__}")
 
-        :return: The pandas DataFrame
+        self._df = data
+
+    @property
+    def df(self) -> DataFrame:
+        """
+        Get the PySpark DataFrame.
+
+        :return: The PySpark DataFrame
         """
         return self._df
-    
-    
-    
-    def iter_rows_dict(self):
-        """
-        A Generator that yields each row as a dictionary.
-
-        :yield: Each row as a dictionary
-        """
-        for _, row in self._df.iterrows():
-            yield row.to_dict()
-
-
-
-
-    def __iter__(self):
-        """
-        Make the DataStorageObject iterable.
-
-        :return: iterator/generator of row dictionaries
-        """
-        return self.iter_rows_dict()
-    
 
 
 class DataLoader:
     """
-    A class responsible for loading data from various sources.
-
-
-    >>> from data_objects import DataLoader
-    >>> loader = DataLoader()
-    >>> df = loader.load_csv("tests/input_test.csv")
-    >>> df.empty
-    False
-    
-
+    A class responsible for loading data from CSV files into PySpark DataFrames.
     """
 
     def validate_csv_path(self, file_path: str) -> Path:
         """
         Validate the CSV file path before attempting to load it.
-        Raises clear exceptions for common file issues.
 
         :param file_path: path to the CSV file
         :return: Path object for the validated file
@@ -116,27 +72,17 @@ class DataLoader:
 
         return path
 
-    def load_csv(self, file_path: str) -> pandas.DataFrame:
+    def load_csv(self, file_path: str) -> DataFrame:
         """
-        Load data from the specified CSV file with robust error handling.
+        Load data from the specified CSV file into a PySpark DataFrame.
 
         :param file_path: The path to the CSV file
-        :return: Loaded data as a pandas DataFrame
-        :raises ValueError: if the CSV is empty/unreadable, malformed, or has encoding issues
+        :return: Loaded data as a PySpark DataFrame
         """
         path = self.validate_csv_path(file_path)
 
         try:
-            return pandas.read_csv(path)
-        except pandas.errors.EmptyDataError as e:
-            raise ValueError(f"CSV has no readable data: {path}") from e
-        except pandas.errors.ParserError as e:
-            raise ValueError(f"CSV parsing failed (bad formatting): {path}") from e
-        except UnicodeDecodeError as e:
-            raise ValueError(f"CSV encoding error (try UTF-8): {path}") from e 
-        
-    async def load_csv_async(self, file_path: str) -> pandas.DataFrame:
-        """
-        Asynchronous version of load_csv for potential future use.
-        """
-        return await asyncio.to_thread(self.load_csv, file_path)
+            spark = SparkSession.builder.appName("WeatherProjectPySpark").getOrCreate()
+            return spark.read.csv(str(path), header=True, inferSchema=True)
+        except Exception as e:
+            raise ValueError(f"Failed to load CSV file: {path}") from e
